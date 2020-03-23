@@ -2,6 +2,7 @@ package com.craftinginterpreters.lox;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ public class Scanner {
     }
 
     static {
+        keywords = new HashMap<>();
         keywords.put("and", TokenType.AND);
         keywords.put("class", TokenType.CLASS);
         keywords.put("else", TokenType.ELSE);
@@ -31,6 +33,7 @@ public class Scanner {
         keywords.put("this", TokenType.THIS);
         keywords.put("true", TokenType.TRUE);
         keywords.put("while", TokenType.WHILE);
+        keywords.put("var", TokenType.VAR);
     }
 
     private int start = 0;
@@ -91,7 +94,7 @@ public class Scanner {
                 addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
                 break;
             case '<':
-                addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS_EQUAL);
+                addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
                 break;
             case '>':
                 addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
@@ -127,7 +130,6 @@ public class Scanner {
                 } else {
                     Lox.error(line, "Unexpected character.");
                 }
-                Lox.error(line, "Unexpected character.");
 
         }
     }
@@ -210,18 +212,14 @@ public class Scanner {
     }
 
     private void number() {
-        while (isDigit(peek())) {
-            advance();
-        }
+        while (isDigit(peek())) advance();
 
         // Look for a fractional part.
         if (peek() == '.' && isDigit(peekNext())) {
             // Consume the "."
             advance();
 
-            while (isDigit(peek())) {
-                advance();
-            }
+            while (isDigit(peek())) advance();
         }
 
         addToken(TokenType.NUMBER,

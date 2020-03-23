@@ -1,5 +1,7 @@
 package com.craftinginterpreters.lox;
 
+import java.util.Objects;
+
 public class Token {
 
     final TokenType type;
@@ -14,6 +16,25 @@ public class Token {
                ", lexeme='" + lexeme + '\'' +
                ", literal=" + literal +
                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Token token = (Token) o;
+        return type == token.type &&
+               Objects.equals(lexeme, token.lexeme) &&
+               Objects.equals(literal, token.literal);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, lexeme, literal);
     }
 
     public Token(TokenType type, String lexeme, Object literal, int line) {
