@@ -100,7 +100,20 @@ public class Scanner {
                 addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
                 break;
             case '/':
-                if (match('/')) {
+                char ch = '/';
+                if(peek() == '*')   {
+                   ch= advance();
+                    while (!isAtEnd() && (peek() !='*' || peekNext()!= '/')) {
+                        ch = advance();
+                    }
+                    if (isAtEnd()) {
+                        Lox.error(line, "Syntax Error Unterminated Comment");
+                        break;
+                    }
+                    advance();
+                    advance();
+                }
+                else if (match('/')) {
                     // A comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd()) {
                         advance();
@@ -207,6 +220,13 @@ public class Scanner {
         return source.charAt(current);
     }
 
+    private char peekNext() {
+        if (current + 1 >= source.length()) {
+            return '\0';
+        }
+        return source.charAt(current + 1);
+    }
+
     private boolean isDigit(char c) {
         return c >= '0' && c <= '9';
     }
@@ -226,16 +246,10 @@ public class Scanner {
                  Double.parseDouble(source.substring(start, current)));
     }
 
-    private char peekNext() {
-        if (current + 1 >= source.length()) {
-            return '\0';
-        }
-        return source.charAt(current + 1);
-    }
-
 
     private void addToken(TokenType type, Object literal) {
         String text = source.substring(start, current);
         tokens.add(new Token(type, text, literal, line));
     }
+
 }

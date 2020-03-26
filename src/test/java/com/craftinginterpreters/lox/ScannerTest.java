@@ -124,7 +124,24 @@ public class ScannerTest {
         String scanTest = String.join(" ", keywords);
         Scanner scanner = new Scanner(scanTest);
         assertThat(scanner.scanTokens().size()).isEqualTo(keywords.size() +1);
+    }
 
+    @Test
+    public void testIgnoresBlockComment(){
+        Scanner scanner = new Scanner("/* This is a Commment */");
+        assertThat(scanner.scanTokens()).hasSize(1);
+    }
+
+    @Test
+    public void testMultiLineComment(){
+        Scanner scanner = new Scanner(String.join("\n", "/*MultiLIne", "Comment*/"));
+        assertThat(scanner.scanTokens()).hasSize(1);
+    }
+
+  @Test
+    public void testIncompleteLine(){
+        Scanner scanner = new Scanner("/* This is incorrect");
+        assertThat(scanner.scanTokens()).hasSize(1);
     }
 
 
